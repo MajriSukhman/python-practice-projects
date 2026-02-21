@@ -40,7 +40,7 @@ class PronounceList:
         }
     
     def speak(self, target, reverse = False, randomize = False):
-        if type(target) != list:
+        if not isinstance(target, list): 
             raise ValueError(f"{target} is not a 'list'")
         if randomize:
             targetClone = target.copy()
@@ -93,9 +93,9 @@ class CLI:
             '1': self.speak,
             '2': self.changeRate,
             '3': self.changeVolume,
-            '4': self.toggleReverse,
-            '5': self.toggleRandomize,
-            '6': self.changeVoice,
+            '4': self.changeVoice,
+            '5': self.toggleReverse,
+            '6': self.toggleRandomize,
             '7': self.quit
         }
         self.running = True
@@ -113,16 +113,24 @@ class CLI:
         self.engine.speak(words, self.reverse, self.randomize)
     
     def changeRate(self):
-        newRate = int(input('Enter new rate (default: 200): '))
-        oldRate = self.engine.settings['rate']
-        self.engine.settings['rate'] = newRate
-        print(f'Changed rate: {oldRate} -> {newRate}')
+        try:
+            newRate = int(input('Enter new rate (default: 200): '))
+            oldRate = self.engine.settings['rate']
+            self.engine.settings['rate'] = newRate
+            print(f'Changed rate: {oldRate} -> {newRate}')
+        except ValueError:
+            print("Invalid input. Enter an int (eg. 100, 500)")
+            
+        
     
     def changeVolume(self):
-        newVol = float(input('Enter new volume (default: 1.0): '))
-        oldVol = self.engine.settings['volume']
-        self.engine.settings['volume'] = newVol
-        print(f'Changed volume: {oldVol} -> {newVol}')
+        try:
+            newVol = float(input('Enter new volume (default: 1.0): '))
+            oldVol = self.engine.settings['volume']
+            self.engine.settings['volume'] = newVol
+            print(f'Changed volume: {oldVol} -> {newVol}')
+        except ValueError:
+            print("Invalid input. Enter a number (eg. 0.5, 1)")
     
     def toggleReverse(self):
         self.reverse = not self.reverse
@@ -142,16 +150,10 @@ class CLI:
         self.running = False
     
     def mainmenu(self):
-        print('1. Speak\n2. Change Rate\n3. Change Volume\n4. Reverse\n5. Randomize\n6. Change Voice\n7. Quit')
+        print('1. Speak\n2. Change Rate\n3. Change Volume\n4. Change Voice\n5. Reverse\n6. Randomize\n7. Quit')
     
     def invalidChoice(self):
         print('Invalid Choice')
-
-# s = PronounceList()
-# words = ['Harry', 'Bhai', 'Jatt']
-# s.speak(words)
-# input()
-# s.speak(words)
 
 if __name__ == '__main__':
     run = CLI()
