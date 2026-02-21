@@ -11,7 +11,7 @@ pip install -r requirements.txt
 ## Usage
 
 ```python
-from pronouncelist import PronounceList
+from main import PronounceList
 
 tts = PronounceList()
 words = ['Hello', 'World']
@@ -30,7 +30,7 @@ tts.speak(words, randomize=True)
 ## CLI
 
 ```bash
-python pronouncelist.py
+python main.py
 ```
 
 Gives you a menu to speak lists, change settings, etc.
