@@ -1,0 +1,4 @@
+import os
+pathh = '/'
+for file in os.listdir():
+    print(file)
