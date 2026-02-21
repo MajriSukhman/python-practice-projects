@@ -1,4 +1,44 @@
-import os
-pathh = '/'
-for file in os.listdir():
-    print(file)
+class CLIApp:
+    def __init__(self):
+        self.commands = {
+            "1": self.say_hello,
+            "2": self.add_numbers,
+            "q": self.quit
+        }
+        self.running = True
+
+    def run(self):
+        while self.running:
+            self.show_menu()
+            choice = input("Select option: ").strip()
+            action = self.commands.get(choice, self.invalid)
+            action()
+
+    def show_menu(self):
+        print("\n=== MAIN MENU ===")
+        print("1. Say Hello")
+        print("2. Add Numbers")
+        print("q. Quit")
+
+    def say_hello(self):
+        name = input("Enter name: ")
+        print(f"Hello {name}")
+
+    def add_numbers(self):
+        try:
+            a = float(input("Enter first number: "))
+            b = float(input("Enter second number: "))
+            print("Result:", a + b)
+        except ValueError:
+            print("Bro… numbers. We discussed this.")
+
+    def quit(self):
+        print("Exiting...")
+        self.running = False
+
+    def invalid(self):
+        print("Invalid choice. Try again.")
+
+if __name__ == "__main__":
+    app = CLIApp()
+    app.run()
