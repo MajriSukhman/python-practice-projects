@@ -33,7 +33,11 @@ class PronounceList:
 
     """
     def __init__(self):
-        self.engine = pyttsx3.init()
+        self.settings = {
+            'rate': 200,
+            'volume': 1,
+            'voice': 0
+        }
     
     def speak(self, target, reverse = False, randomize = False):
         if type(target) != list:
@@ -46,39 +50,39 @@ class PronounceList:
             sentence = ' '.join(target[::-1])
         else:
             sentence = ' '.join(target)
-        self.engine = pyttsx3.init()
-        self.engine.say(sentence)
-        self.engine.runAndWait()
+        engine = pyttsx3.init()
+        engine.setProperty('rate',self.settings['rate'])
+        engine.setProperty('volume',self.settings['volume'])
+        voices = engine.getProperty('voices')
+        engine.setProperty('voice',voices[self.settings['voice']].id)
+        engine.say(sentence)
+        engine.runAndWait()
         # self.engine.stop()
     
     @property
     def rate(self):
-        return self.engine.getProperty('rate')
+        return self.settings['rate']
     
     @property
     def volume(self):
-        return self.engine.getProperty('volume')
+        return self.settings['volume']
     
     @property
     def voice(self):
-        return self.engine.getProperty('voice')
+        return self.settings['voice']
     
     
     @rate.setter
     def rate(self, targetValue):
-        self.engine.setProperty('rate', targetValue)
+        self.settings['rate'] = targetValue
 
     @volume.setter
     def volume(self, targetValue):
-        self.engine.setProperty('volume', targetValue)
+        self.settings['volume'] = targetValue
 
     @voice.setter
     def voice(self, targetValue):
-        try:
-            targetValue = self.engine.getProperty('voices')[targetValue].id
-        except IndexError:
-            raise ValueError("Invalid Voice Index - (try 0 or 1)")
-        self.engine.setProperty('voice', targetValue)
+        self.settings['voice'] = targetValue
 
 class CLI:
     def __init__(self):
@@ -88,10 +92,11 @@ class CLI:
         self.commands = {
             '1': self.speak,
             '2': self.changeRate,
-            '3': self.toggleReverse,
-            '4': self.toggleRandomize,
-            '5': self.changeVoice,
-            '6': self.quit
+            '3': self.changeVolume,
+            '4': self.toggleReverse,
+            '5': self.toggleRandomize,
+            '6': self.changeVoice,
+            '7': self.quit
         }
         self.running = True
     
@@ -108,28 +113,36 @@ class CLI:
         self.engine.speak(words, self.reverse, self.randomize)
     
     def changeRate(self):
-        newRate = input('Enter new rate (default: 200): ')
-        oldRate = self.engine.rate
-        self.engine.rate = newRate
+        newRate = int(input('Enter new rate (default: 200): '))
+        oldRate = self.engine.settings['rate']
+        self.engine.settings['rate'] = newRate
         print(f'Changed rate: {oldRate} -> {newRate}')
     
+    def changeVolume(self):
+        newVol = float(input('Enter new volume (default: 1.0): '))
+        oldVol = self.engine.settings['volume']
+        self.engine.settings['volume'] = newVol
+        print(f'Changed volume: {oldVol} -> {newVol}')
+    
     def toggleReverse(self):
-        self.engine.reverse = not self.engine.reverse
-        print(f'Reverse: {self.engine.reverse}')
+        self.reverse = not self.reverse
+        print(f'Reverse: {self.reverse}')
     
     def toggleRandomize(self):
-        self.engine.randomize = not self.engine.randomize
-        print(f'Randomize: {self.engine.randomize}')
+        self.randomize = not self.randomize
+        print(f'Randomize: {self.randomize}')
     
     def changeVoice(self):
-        newVoice = input("Enter Voice ID (Default: 0): ")
-        self.engine.voice = newVoice
+        newVoice = int(input("Enter Voice ID (Default: 0): "))
+        oldVoice = self.engine.settings['voice']
+        self.engine.settings['voice'] = newVoice
+        print(f'Changed Voice from {oldVoice} -> {newVoice}')
     
     def quit(self):
         self.running = False
     
     def mainmenu(self):
-        print('1. Speak\n2. Change Rate\n3. Reverse\n4. Randomize\n5. Change Voice\n6. Quit')
+        print('1. Speak\n2. Change Rate\n3. Change Volume\n4. Reverse\n5. Randomize\n6. Change Voice\n7. Quit')
     
     def invalidChoice(self):
         print('Invalid Choice')
@@ -137,7 +150,9 @@ class CLI:
 # s = PronounceList()
 # words = ['Harry', 'Bhai', 'Jatt']
 # s.speak(words)
+# input()
+# s.speak(words)
 
-# if __name__ == '__main__':
-#     run = CLI()
-#     run.run()
+if __name__ == '__main__':
+    run = CLI()
+    run.run()
